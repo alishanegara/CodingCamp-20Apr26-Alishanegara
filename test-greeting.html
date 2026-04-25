@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreetingModule Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .greeting-container {
+      border: 2px solid #4A90E2;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .time {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .date {
+      font-size: 24px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .greeting {
+      font-size: 32px;
+      color: #4A90E2;
+    }
+    .test-results {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f5f5f5;
+      border-radius: 5px;
+    }
+    .test-results h2 {
+      margin-top: 0;
+    }
+    .test-case {
+      margin: 10px 0;
+      padding: 10px;
+      background: white;
+      border-left: 3px solid #4A90E2;
+    }
+    .pass {
+      border-left-color: #5CB85C;
+    }
+    .fail {
+      border-left-color: #D9534F;
+    }
+  </style>
+</head>
+<body>
+  <h1>GreetingModule Test</h1>
+  
+  <div class="greeting-container">
+    <div class="time">Loading...</div>
+    <div class="date">Loading...</div>
+    <div class="greeting">Loading...</div>
+  </div>
+
+  <div class="test-results">
+    <h2>Test Results</h2>
+    <div id="test-output"></div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Initialize the module
+    const container = document.querySelector('.greeting-container');
+    GreetingModule.init(container);
+
+    // Run tests
+    const testOutput = document.getElementById('test-output');
+    const tests = [];
+
+    // Test formatTime
+    tests.push({
+      name: 'formatTime - midnight',
+      result: GreetingModule.formatTime(new Date('2024-01-15T00:00:00')) === '12:00 AM',
+      expected: '12:00 AM',
+      actual: GreetingModule.formatTime(new Date('2024-01-15T00:00:00'))
+    });
+
+    tests.push({
+      name: 'formatTime - noon',
+      result: GreetingModule.formatTime(new Date('2024-01-15T12:00:00')) === '12:00 PM',
+      expected: '12:00 PM',
+      actual: GreetingModule.formatTime(new Date('2024-01-15T12:00:00'))
+    });
+
+    tests.push({
+      name: 'formatTime - morning',
+      result: GreetingModule.formatTime(new Date('2024-01-15T09:30:00')) === '9:30 AM',
+      expected: '9:30 AM',
+      actual: GreetingModule.formatTime(new Date('2024-01-15T09:30:00'))
+    });
+
+    tests.push({
+      name: 'formatTime - afternoon',
+      result: GreetingModule.formatTime(new Date('2024-01-15T15:45:00')) === '3:45 PM',
+      expected: '3:45 PM',
+      actual: GreetingModule.formatTime(new Date('2024-01-15T15:45:00'))
+    });
+
+    // Test formatDate
+    tests.push({
+      name: 'formatDate - Monday, January 15',
+      result: GreetingModule.formatDate(new Date('2024-01-15T10:30:00')) === 'Monday, January 15',
+      expected: 'Monday, January 15',
+      actual: GreetingModule.formatDate(new Date('2024-01-15T10:30:00'))
+    });
+
+    // Test getGreeting
+    tests.push({
+      name: 'getGreeting - 5 AM (morning)',
+      result: GreetingModule.getGreeting(5) === 'Good morning',
+      expected: 'Good morning',
+      actual: GreetingModule.getGreeting(5)
+    });
+
+    tests.push({
+      name: 'getGreeting - 12 PM (afternoon)',
+      result: GreetingModule.getGreeting(12) === 'Good afternoon',
+      expected: 'Good afternoon',
+      actual: GreetingModule.getGreeting(12)
+    });
+
+    tests.push({
+      name: 'getGreeting - 5 PM (evening)',
+      result: GreetingModule.getGreeting(17) === 'Good evening',
+      expected: 'Good evening',
+      actual: GreetingModule.getGreeting(17)
+    });
+
+    tests.push({
+      name: 'getGreeting - 9 PM (night)',
+      result: GreetingModule.getGreeting(21) === 'Good night',
+      expected: 'Good night',
+      actual: GreetingModule.getGreeting(21)
+    });
+
+    tests.push({
+      name: 'getGreeting - midnight (night)',
+      result: GreetingModule.getGreeting(0) === 'Good night',
+      expected: 'Good night',
+      actual: GreetingModule.getGreeting(0)
+    });
+
+    // Display results
+    let passCount = 0;
+    let failCount = 0;
+
+    tests.forEach(test => {
+      const div = document.createElement('div');
+      div.className = `test-case ${test.result ? 'pass' : 'fail'}`;
+      div.innerHTML = `
+        <strong>${test.result ? '✓' : '✗'} ${test.name}</strong><br>
+        Expected: ${test.expected}<br>
+        Actual: ${test.actual}
+      `;
+      testOutput.appendChild(div);
+
+      if (test.result) {
+        passCount++;
+      } else {
+        failCount++;
+      }
+    });
+
+    const summary = document.createElement('div');
+    summary.style.marginTop = '20px';
+    summary.style.fontWeight = 'bold';
+    summary.innerHTML = `
+      <p>Total: ${tests.length} tests</p>
+      <p style="color: #5CB85C;">Passed: ${passCount}</p>
+      <p style="color: #D9534F;">Failed: ${failCount}</p>
+    `;
+    testOutput.appendChild(summary);
+
+    console.log('GreetingModule initialized and tests completed');
+  </script>
+</body>
+</html>

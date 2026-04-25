@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo List Life Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Settings Component -->
+    <div class="settings-container">
+      <h2 class="settings-title">Settings</h2>
+      
+      <!-- Theme Switcher -->
+      <div class="setting-item">
+        <label for="theme-toggle" class="setting-label">
+          <span class="setting-name">Theme</span>
+          <span class="setting-description">Switch between light and dark mode</span>
+        </label>
+        <button 
+          id="theme-toggle" 
+          class="theme-toggle" 
+          aria-label="Toggle theme"
+          aria-pressed="false">
+          <span class="theme-icon theme-icon-light">☀️</span>
+          <span class="theme-icon theme-icon-dark">🌙</span>
+        </button>
+      </div>
+      
+      <!-- Custom Name Input -->
+      <div class="setting-item">
+        <label for="custom-name-input" class="setting-label">
+          <span class="setting-name">Your Name</span>
+          <span class="setting-description">Personalize your greeting</span>
+        </label>
+        <form class="custom-name-form">
+          <input 
+            type="text" 
+            id="custom-name-input"
+            class="custom-name-input" 
+            placeholder="Enter your name"
+            maxlength="50">
+          <button type="submit" class="btn-save-name">Save</button>
+        </form>
+      </div>
+      
+      <!-- Pomodoro Duration Selector -->
+      <div class="setting-item">
+        <label for="duration-select" class="setting-label">
+          <span class="setting-name">Focus Timer Duration</span>
+          <span class="setting-description">Choose your preferred session length</span>
+        </label>
+        <select id="duration-select" class="duration-select">
+          <option value="15">15 minutes</option>
+          <option value="25" selected>25 minutes</option>
+          <option value="30">30 minutes</option>
+          <option value="45">45 minutes</option>
+        </select>
+      </div>
+      
+      <!-- Save Confirmation -->
+      <div class="settings-saved" hidden aria-live="polite">
+        ✓ Settings saved
+      </div>
+    </div>
+
+    <!-- Greeting Component -->
+    <div class="greeting-container">
+      <div class="time">10:30 AM</div>
+      <div class="date">Monday, January 15</div>
+      <div class="greeting">Good morning</div>
+    </div>
+
+    <!-- Focus Timer Component -->
+    <div class="timer-container">
+      <div class="timer-display">25:00</div>
+      <div class="timer-controls">
+        <button class="btn-start">Start</button>
+        <button class="btn-stop" disabled>Stop</button>
+        <button class="btn-reset">Reset</button>
+      </div>
+      <div class="timer-complete" hidden>Session Complete!</div>
+    </div>
+
+    <!-- Task List Component -->
+    <div class="task-container">
+      <form class="task-form">
+        <input type="text" class="task-input" placeholder="Add a new task...">
+        <button type="submit" class="btn-add">Add</button>
+      </form>
+      <ul class="task-list">
+        <!-- Tasks will be rendered here -->
+      </ul>
+      <div class="task-empty" hidden>No tasks yet. Add one above!</div>
+    </div>
+
+    <!-- Quick Links Component -->
+    <div class="links-container">
+      <form class="links-form">
+        <input type="text" class="link-name-input" placeholder="Name">
+        <input type="url" class="link-url-input" placeholder="URL">
+        <button type="submit" class="btn-add-link">Add Link</button>
+      </form>
+      <div class="links-list">
+        <!-- Links will be rendered here -->
+      </div>
+      <div class="links-empty" hidden>No quick links yet. Add one above!</div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

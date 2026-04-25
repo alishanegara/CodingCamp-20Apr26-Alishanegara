@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings Module API Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: var(--bg-secondary, #f5f5f5);
+      color: var(--text-primary, #212121);
+    }
+
+    body.dark-theme {
+      --bg-primary: #1E1E1E;
+      --bg-secondary: #2D2D2D;
+      --text-primary: #E0E0E0;
+      --text-secondary: #B0B0B0;
+      --border-color: #404040;
+    }
+
+    .settings-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    body.dark-theme .settings-container {
+      background: #1E1E1E;
+    }
+
+    .test-section {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    body.dark-theme .test-section {
+      background: #1E1E1E;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #4A90E2;
+      color: white;
+    }
+
+    button:hover {
+      background: #357ABD;
+    }
+
+    input, select {
+      padding: 8px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    body.dark-theme .result {
+      background: #2D2D2D;
+    }
+
+    .settings-saved {
+      padding: 10px;
+      background: #5CB85C;
+      color: white;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Settings Module API Test</h1>
+
+  <!-- Settings UI -->
+  <div class="settings-container">
+    <h2>Settings</h2>
+    
+    <div class="setting-item">
+      <label for="theme-toggle">Theme</label>
+      <button id="theme-toggle" aria-pressed="false">Toggle Theme</button>
+    </div>
+    
+    <div class="setting-item">
+      <label for="custom-name-input">Your Name</label>
+      <form class="custom-name-form">
+        <input type="text" class="custom-name-input" placeholder="Enter your name" maxlength="50">
+        <button type="submit">Save Name</button>
+      </form>
+    </div>
+    
+    <div class="setting-item">
+      <label for="duration-select">Focus Timer Duration</label>
+      <select class="duration-select">
+        <option value="15">15 minutes</option>
+        <option value="25">25 minutes</option>
+        <option value="30">30 minutes</option>
+        <option value="45">45 minutes</option>
+      </select>
+    </div>
+    
+    <div class="settings-saved" hidden>✓ Settings saved</div>
+  </div>
+
+  <!-- Test Controls -->
+  <div class="test-section">
+    <h2>API Tests</h2>
+    
+    <h3>Theme API</h3>
+    <button onclick="testGetTheme()">Get Theme</button>
+    <button onclick="testSetThemeLight()">Set Theme: Light</button>
+    <button onclick="testSetThemeDark()">Set Theme: Dark</button>
+    <button onclick="testSetThemeInvalid()">Set Theme: Invalid</button>
+    <div id="theme-result" class="result"></div>
+
+    <h3>Custom Name API</h3>
+    <button onclick="testGetCustomName()">Get Custom Name</button>
+    <button onclick="testSetCustomName()">Set Custom Name: "Alice"</button>
+    <button onclick="testSetCustomNameEmpty()">Set Custom Name: Empty</button>
+    <button onclick="testSetCustomNameInvalid()">Set Custom Name: Too Long</button>
+    <div id="name-result" class="result"></div>
+
+    <h3>Pomodoro Duration API</h3>
+    <button onclick="testGetDuration()">Get Duration</button>
+    <button onclick="testSetDuration15()">Set Duration: 15</button>
+    <button onclick="testSetDuration30()">Set Duration: 30</button>
+    <button onclick="testSetDurationInvalid()">Set Duration: Invalid (20)</button>
+    <div id="duration-result" class="result"></div>
+
+    <h3>Other</h3>
+    <button onclick="testResetToDefaults()">Reset to Defaults</button>
+    <button onclick="testShowSavedMessage()">Show Saved Message</button>
+    <div id="other-result" class="result"></div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Initialize modules
+    StorageModule.init();
+    SettingsModule.init(document.querySelector('.settings-container'));
+
+    // Test functions
+    function testGetTheme() {
+      const theme = SettingsModule.getTheme();
+      document.getElementById('theme-result').textContent = `Current theme: ${theme}`;
+    }
+
+    function testSetThemeLight() {
+      const success = SettingsModule.setTheme('light');
+      document.getElementById('theme-result').textContent = `Set theme to light: ${success}`;
+    }
+
+    function testSetThemeDark() {
+      const success = SettingsModule.setTheme('dark');
+      document.getElementById('theme-result').textContent = `Set theme to dark: ${success}`;
+    }
+
+    function testSetThemeInvalid() {
+      const success = SettingsModule.setTheme('blue');
+      document.getElementById('theme-result').textContent = `Set theme to blue (invalid): ${success}`;
+    }
+
+    function testGetCustomName() {
+      const name = SettingsModule.getCustomName();
+      document.getElementById('name-result').textContent = `Current name: "${name}"`;
+    }
+
+    function testSetCustomName() {
+      const success = SettingsModule.setCustomName('Alice');
+      document.getElementById('name-result').textContent = `Set name to "Alice": ${success}`;
+    }
+
+    function testSetCustomNameEmpty() {
+      const success = SettingsModule.setCustomName('');
+      document.getElementById('name-result').textContent = `Set name to empty: ${success}`;
+    }
+
+    function testSetCustomNameInvalid() {
+      const longName = 'a'.repeat(51);
+      const success = SettingsModule.setCustomName(longName);
+      document.getElementById('name-result').textContent = `Set name to 51 chars (invalid): ${success}`;
+    }
+
+    function testGetDuration() {
+      const duration = SettingsModule.getPomodoroDuration();
+      document.getElementById('duration-result').textContent = `Current duration: ${duration} minutes`;
+    }
+
+    function testSetDuration15() {
+      const success = SettingsModule.setPomodoroDuration(15);
+      document.getElementById('duration-result').textContent = `Set duration to 15: ${success}`;
+    }
+
+    function testSetDuration30() {
+      const success = SettingsModule.setPomodoroDuration(30);
+      document.getElementById('duration-result').textContent = `Set duration to 30: ${success}`;
+    }
+
+    function testSetDurationInvalid() {
+      const success = SettingsModule.setPomodoroDuration(20);
+      document.getElementById('duration-result').textContent = `Set duration to 20 (invalid): ${success}`;
+    }
+
+    function testResetToDefaults() {
+      SettingsModule.resetToDefaults();
+      document.getElementById('other-result').textContent = 'Reset to defaults completed';
+    }
+
+    function testShowSavedMessage() {
+      SettingsModule.showSavedMessage();
+      document.getElementById('other-result').textContent = 'Saved message shown';
+    }
+  </script>
+</body>
+</html>

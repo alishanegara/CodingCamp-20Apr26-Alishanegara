@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskModule Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      margin-bottom: 5px;
+    }
+    .task-item.completed .task-text {
+      text-decoration: line-through;
+      color: #888;
+    }
+    .task-text {
+      flex: 1;
+    }
+    .task-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .task-input {
+      flex: 1;
+      padding: 8px;
+    }
+    button {
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    .task-empty {
+      color: #888;
+      font-style: italic;
+      padding: 20px;
+      text-align: center;
+    }
+    .task-editing {
+      background-color: #f0f0f0;
+    }
+    .task-edit-input {
+      flex: 1;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>TaskModule Test</h1>
+  
+  <div class="task-container">
+    <form class="task-form">
+      <input type="text" class="task-input" placeholder="Add a new task...">
+      <button type="submit" class="btn-add">Add</button>
+    </form>
+    <ul class="task-list">
+      <!-- Tasks will be rendered here -->
+    </ul>
+    <div class="task-empty" hidden>No tasks yet. Add one above!</div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Initialize TaskModule
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.querySelector('.task-container');
+      TaskModule.init(container);
+      TaskModule.loadTasks();
+      
+      console.log('TaskModule initialized');
+      console.log('Try adding tasks using the form above');
+    });
+  </script>
+</body>
+</html>

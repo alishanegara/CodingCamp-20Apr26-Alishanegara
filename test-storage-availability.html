@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Storage Availability Test</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      padding: 20px;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-result {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .test-result.pass {
+      background: #d4edda;
+      color: #155724;
+    }
+    .test-result.fail {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: #4A90E2;
+      color: white;
+    }
+    button:hover {
+      background: #357ABD;
+    }
+  </style>
+</head>
+<body>
+  <h1>Storage Availability Test</h1>
+  
+  <div class="test-section">
+    <h2>Test 1: Storage Availability Detection</h2>
+    <button onclick="testStorageAvailability()">Run Test</button>
+    <div id="test1-result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Test 2: In-Memory Fallback</h2>
+    <button onclick="testInMemoryFallback()">Run Test</button>
+    <div id="test2-result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Test 3: Warning Banner Display</h2>
+    <p>To test this, open this page in private/incognito mode where localStorage may be disabled.</p>
+    <button onclick="testWarningBanner()">Check Warning Banner</button>
+    <div id="test3-result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Test 4: Save and Load with Fallback</h2>
+    <button onclick="testSaveLoad()">Run Test</button>
+    <div id="test4-result"></div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Initialize StorageModule
+    StorageModule.init();
+
+    function showResult(elementId, message, pass) {
+      const element = document.getElementById(elementId);
+      element.innerHTML = `<div class="test-result ${pass ? 'pass' : 'fail'}">${message}</div>`;
+    }
+
+    function testStorageAvailability() {
+      const isAvailable = StorageModule.isStorageAvailable();
+      showResult('test1-result', 
+        `Storage Available: ${isAvailable ? 'YES ✓' : 'NO (using in-memory fallback)'}`, 
+        true);
+    }
+
+    function testInMemoryFallback() {
+      // This test works regardless of localStorage availability
+      const testData = { test: 'data', value: 123 };
+      const saveResult = StorageModule.save('test_key', testData);
+      const loadResult = StorageModule.load('test_key');
+      
+      const pass = saveResult && JSON.stringify(loadResult) === JSON.stringify(testData);
+      showResult('test2-result', 
+        pass ? 'In-memory fallback working ✓' : 'Fallback failed ✗', 
+        pass);
+    }
+
+    function testWarningBanner() {
+      const warning = document.querySelector('.storage-warning');
+      const isAvailable = StorageModule.isStorageAvailable();
+      
+      if (!isAvailable && warning) {
+        showResult('test3-result', 
+          'Warning banner is displayed ✓ (localStorage unavailable)', 
+          true);
+      } else if (isAvailable && !warning) {
+        showResult('test3-result', 
+          'No warning banner (localStorage available) ✓', 
+          true);
+      } else {
+        showResult('test3-result', 
+          'Warning banner state inconsistent ✗', 
+          false);
+      }
+    }
+
+    function testSaveLoad() {
+      // Test save and load operations
+      const tasks = [
+        { id: '1', text: 'Task 1', completed: false },
+        { id: '2', text: 'Task 2', completed: true }
+      ];
+      
+      StorageModule.save('test_tasks', tasks);
+      const loaded = StorageModule.load('test_tasks');
+      
+      const pass = JSON.stringify(loaded) === JSON.stringify(tasks);
+      showResult('test4-result', 
+        pass ? 'Save and Load working correctly ✓' : 'Save/Load failed ✗', 
+        pass);
+      
+      // Cleanup
+      StorageModule.remove('test_tasks');
+    }
+
+    // Auto-run first test
+    testStorageAvailability();
+  </script>
+</body>
+</html>

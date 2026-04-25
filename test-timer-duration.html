@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timer Duration Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .timer-display {
+      font-size: 48px;
+      font-weight: bold;
+      text-align: center;
+      margin: 20px 0;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 3px;
+    }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <h1>TimerModule Duration Configuration Test</h1>
+  
+  <div class="test-section">
+    <h2>Timer Display</h2>
+    <div class="timer-container">
+      <div class="timer-display">25:00</div>
+      <div class="timer-controls">
+        <button class="btn-start">Start</button>
+        <button class="btn-stop" disabled>Stop</button>
+        <button class="btn-reset">Reset</button>
+      </div>
+      <div class="timer-complete" hidden>Session Complete!</div>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>Test: Update Duration</h2>
+    <button onclick="testUpdateDuration()">Test updateDuration()</button>
+    <div id="updateDurationResult" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Test: Get Duration</h2>
+    <button onclick="testGetDuration()">Test getDuration()</button>
+    <div id="getDurationResult" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Test: Update While Running</h2>
+    <button onclick="testUpdateWhileRunning()">Test Update While Running</button>
+    <div id="updateWhileRunningResult" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Test: Reset Uses Configured Duration</h2>
+    <button onclick="testResetUsesConfigured()">Test Reset</button>
+    <div id="resetResult" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Manual Duration Control</h2>
+    <label>
+      Set Duration (minutes):
+      <select id="durationSelect">
+        <option value="15">15 minutes</option>
+        <option value="25" selected>25 minutes</option>
+        <option value="30">30 minutes</option>
+        <option value="45">45 minutes</option>
+      </select>
+    </label>
+    <button onclick="setDuration()">Apply Duration</button>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Initialize TimerModule
+    const container = document.querySelector('.timer-container');
+    TimerModule.init(container);
+
+    function testUpdateDuration() {
+      const result = document.getElementById('updateDurationResult');
+      
+      // Test updating to 30 minutes
+      const success = TimerModule.updateDuration(30);
+      const display = document.querySelector('.timer-display').textContent;
+      
+      if (success && display === '30:00') {
+        result.className = 'result success';
+        result.textContent = '✓ PASS: Duration updated to 30 minutes. Display shows: ' + display;
+      } else {
+        result.className = 'result error';
+        result.textContent = '✗ FAIL: Expected 30:00, got: ' + display;
+      }
+      
+      // Reset back to 25
+      TimerModule.updateDuration(25);
+    }
+
+    function testGetDuration() {
+      const result = document.getElementById('getDurationResult');
+      
+      // Set to 45 minutes
+      TimerModule.updateDuration(45);
+      const duration = TimerModule.getDuration();
+      
+      if (duration === 45) {
+        result.className = 'result success';
+        result.textContent = '✓ PASS: getDuration() returned 45 minutes';
+      } else {
+        result.className = 'result error';
+        result.textContent = '✗ FAIL: Expected 45, got: ' + duration;
+      }
+      
+      // Reset back to 25
+      TimerModule.updateDuration(25);
+    }
+
+    function testUpdateWhileRunning() {
+      const result = document.getElementById('updateWhileRunningResult');
+      
+      // Start the timer
+      TimerModule.start();
+      
+      // Try to update duration while running
+      const success = TimerModule.updateDuration(30);
+      
+      // Stop the timer
+      TimerModule.stop();
+      TimerModule.reset();
+      
+      if (!success) {
+        result.className = 'result success';
+        result.textContent = '✓ PASS: updateDuration() correctly returned false when timer is running';
+      } else {
+        result.className = 'result error';
+        result.textContent = '✗ FAIL: updateDuration() should return false when timer is running';
+      }
+    }
+
+    function testResetUsesConfigured() {
+      const result = document.getElementById('resetResult');
+      
+      // Set to 15 minutes
+      TimerModule.updateDuration(15);
+      
+      // Start and let it run a bit (simulated by just starting)
+      TimerModule.start();
+      setTimeout(() => {
+        TimerModule.stop();
+        
+        // Reset should go back to 15 minutes, not 25
+        TimerModule.reset();
+        const display = document.querySelector('.timer-display').textContent;
+        
+        if (display === '15:00') {
+          result.className = 'result success';
+          result.textContent = '✓ PASS: Reset correctly uses configured duration (15:00)';
+        } else {
+          result.className = 'result error';
+          result.textContent = '✗ FAIL: Expected 15:00 after reset, got: ' + display;
+        }
+        
+        // Reset back to 25
+        TimerModule.updateDuration(25);
+      }, 100);
+    }
+
+    function setDuration() {
+      const select = document.getElementById('durationSelect');
+      const minutes = parseInt(select.value);
+      TimerModule.updateDuration(minutes);
+    }
+  </script>
+</body>
+</html>

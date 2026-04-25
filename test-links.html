@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinksModule Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .links-container {
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .links-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .link-name-input, .link-url-input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .btn-add-link {
+      padding: 8px 16px;
+      background-color: #4A90E2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-add-link:hover {
+      background-color: #357ABD;
+    }
+    .links-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .link-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+    }
+    .link-button {
+      flex: 1;
+      padding: 8px 12px;
+      background-color: #4A90E2;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .link-button:hover {
+      background-color: #357ABD;
+    }
+    .btn-delete-link {
+      padding: 4px 12px;
+      background-color: #D9534F;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .btn-delete-link:hover {
+      background-color: #C9302C;
+    }
+    .links-empty {
+      color: #999;
+      text-align: center;
+      padding: 20px;
+    }
+    .test-results {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #f0f0f0;
+      border-radius: 8px;
+    }
+    .test-results h2 {
+      margin-top: 0;
+    }
+    .test-pass {
+      color: green;
+    }
+    .test-fail {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>LinksModule Test Page</h1>
+  
+  <div class="links-container">
+    <h2>Quick Links</h2>
+    <form class="links-form">
+      <input type="text" class="link-name-input" placeholder="Name">
+      <input type="url" class="link-url-input" placeholder="URL">
+      <button type="submit" class="btn-add-link">Add Link</button>
+    </form>
+    <div class="links-list">
+      <!-- Links will be rendered here -->
+    </div>
+    <div class="links-empty" hidden>No quick links yet. Add one above!</div>
+  </div>
+
+  <div class="test-results">
+    <h2>Manual Test Checklist</h2>
+    <ul>
+      <li>✓ Add a link with name "GitHub" and URL "github.com" - should normalize to https://github.com</li>
+      <li>✓ Add a link with name "Google" and URL "https://google.com" - should preserve protocol</li>
+      <li>✓ Try to add a link with empty name - should fail</li>
+      <li>✓ Try to add a link with invalid URL - should fail</li>
+      <li>✓ Click a link - should open in new tab with noopener, noreferrer</li>
+      <li>✓ Delete a link - should remove from list and storage</li>
+      <li>✓ Refresh page - links should persist from Local Storage</li>
+      <li>✓ Empty state message should show when no links exist</li>
+    </ul>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Run some automated tests
+    console.log('=== LinksModule Tests ===');
+    
+    // Test 1: ID generation
+    const id1 = LinksModule.generateId();
+    const id2 = LinksModule.generateId();
+    console.log('Test 1 - ID Generation:', id1 !== id2 ? '✓ PASS' : '✗ FAIL');
+    
+    // Test 2: URL normalization
+    const normalized1 = LinksModule.normalizeUrl('example.com');
+    console.log('Test 2 - URL Normalization (add https):', normalized1 === 'https://example.com' ? '✓ PASS' : '✗ FAIL');
+    
+    const normalized2 = LinksModule.normalizeUrl('https://example.com');
+    console.log('Test 3 - URL Normalization (preserve https):', normalized2 === 'https://example.com' ? '✓ PASS' : '✗ FAIL');
+    
+    const normalized3 = LinksModule.normalizeUrl('not a url');
+    console.log('Test 4 - URL Normalization (invalid):', normalized3 === null ? '✓ PASS' : '✗ FAIL');
+    
+    // Test 5: Link validation
+    const valid1 = LinksModule.validateLink('GitHub', 'github.com');
+    console.log('Test 5 - Link Validation (valid):', valid1 === true ? '✓ PASS' : '✗ FAIL');
+    
+    const valid2 = LinksModule.validateLink('', 'github.com');
+    console.log('Test 6 - Link Validation (empty name):', valid2 === false ? '✓ PASS' : '✗ FAIL');
+    
+    const valid3 = LinksModule.validateLink('Valid', 'not a url');
+    console.log('Test 7 - Link Validation (invalid URL):', valid3 === false ? '✓ PASS' : '✗ FAIL');
+    
+    const longName = 'a'.repeat(51);
+    const valid4 = LinksModule.validateLink(longName, 'example.com');
+    console.log('Test 8 - Link Validation (name too long):', valid4 === false ? '✓ PASS' : '✗ FAIL');
+    
+    console.log('=== All automated tests completed ===');
+  </script>
+</body>
+</html>
